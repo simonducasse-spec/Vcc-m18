@@ -186,8 +186,12 @@
 
   /* Boutons action */
   .action-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .action-row {
+    display: flex;
     gap: 10px;
   }
   .action-btn {
@@ -202,6 +206,7 @@
     transition: all 0.2s;
     text-align: center;
     line-height: 1.3;
+    flex: 1;
   }
   .action-btn:hover { border-color: rgba(232,184,75,0.4); color: var(--light); }
   .action-btn.active {
@@ -209,7 +214,6 @@
     background: rgba(232,184,75,0.12);
     color: var(--accent);
   }
-  .action-btn .btn-icon { font-size: 20px; display: block; margin-bottom: 4px; }
 
   /* Zone d'affichage image */
   .schema-zone {
@@ -338,18 +342,14 @@
 
     <div class="sj-label">Action</div>
     <div class="action-grid">
-      <button class="action-btn active" onclick="selectAction('reception', this)">
-        <span class="btn-icon">📥</span>Réception
-      </button>
-      <button class="action-btn" onclick="selectAction('attaque2', this)">
-        <span class="btn-icon">⚡</span>Attaque<br>Zone 2
-      </button>
-      <button class="action-btn" onclick="selectAction('attaque3', this)">
-        <span class="btn-icon">🎯</span>Attaque<br>Zone 3
-      </button>
-      <button class="action-btn" onclick="selectAction('attaque4', this)">
-        <span class="btn-icon">💪</span>Attaque<br>Zone 4
-      </button>
+      <div class="action-row">
+        <button class="action-btn active" onclick="selectAction('reception', this)">Réception</button>
+      </div>
+      <div class="action-row">
+        <button class="action-btn" onclick="selectAction('attaque2', this)">Attaque Z2</button>
+        <button class="action-btn" onclick="selectAction('attaque3', this)">Attaque Z3</button>
+        <button class="action-btn" onclick="selectAction('attaque4', this)">Attaque Z4</button>
+      </div>
     </div>
   </div>
 
