@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Saisie Ligue — Coach M18</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --navy:#0d1b2a; --blue:#1a3c5e; --accent:#e8b84b; --green:#2a9d5c; --red:#c0392b; --light:#f4f6f9; --muted:#8a9ab5; --radius:16px;
+          --tA:#e05252; --tB:#4a90d9; --tC:#3fbf7f; }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { font-family:'DM Sans',sans-serif; background:var(--navy); color:var(--light); min-height:100vh; overflow-x:hidden; font-size:14px; }
+  .header { background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 100%); padding:20px 16px 16px; }
+  .badge { display:inline-block; background:var(--accent); color:var(--navy); font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:4px 10px; border-radius:20px; margin-bottom:6px; }
+  h1 { font-family:'Bebas Neue',sans-serif; font-size:32px; letter-spacing:2px; line-height:1; }
+  .wrap { padding:16px; max-width:720px; margin:0 auto; }
+  .status { border-radius:12px; padding:10px 12px; font-size:13px; margin-bottom:14px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); line-height:1.5; }
+  .status.warn { border-color:rgba(232,184,75,.5); background:rgba(232,184,75,.1); }
+  .status.ok { border-color:rgba(42,157,92,.5); background:rgba(42,157,92,.1); }
+  .card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius); padding:16px; margin-bottom:14px; }
+  .card h2 { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:1px; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .card h2 small { font-family:'DM Sans',sans-serif; font-size:12px; color:var(--muted); letter-spacing:0; font-weight:400; margin-left:auto; }
+  .hint { font-size:12px; color:var(--muted); margin-bottom:10px; line-height:1.5; }
+  label.lbl { font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:6px; }
+  input[type=date], input[type=text], input[type=number], select, textarea {
+    background:rgba(255,255,255,0.06); border:1.5px solid rgba(255,255,255,0.15); border-radius:10px; color:var(--light);
+    font-family:inherit; font-size:15px; padding:9px 10px; width:100%; }
+  select option { color:#000; }
+  textarea { min-height:160px; font-size:14px; line-height:1.5; }
+  input:focus, select:focus, textarea:focus { outline:none; border-color:var(--accent); }
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .btn { border:2px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.05); color:var(--light); border-radius:10px; padding:10px 14px;
+         font-family:inherit; font-size:14px; font-weight:600; cursor:pointer; }
+  .btn:active { transform:scale(.98); }
+  .btn.primary { background:var(--accent); color:var(--navy); border-color:var(--accent); }
+  .btn.danger { border-color:rgba(192,57,43,.6); color:#e57368; }
+  .btn.small { padding:6px 10px; font-size:13px; }
+  .btns { display:flex; gap:8px; flex-wrap:wrap; }
+  .plist { display:flex; flex-direction:column; }
+  .prow { display:flex; align-items:center; gap:8px; padding:8px 0; border-top:1px solid rgba(255,255,255,0.06); }
+  .prow:first-child { border-top:none; }
+  .prow .nm { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .prow .nm small { color:var(--muted); margin-left:4px; }
+  .seg { display:flex; border-radius:9px; overflow:hidden; border:1.5px solid rgba(255,255,255,0.15); flex-shrink:0; }
+  .seg button { border:none; background:transparent; color:var(--muted); font-family:inherit; font-weight:700; font-size:13px; width:38px; height:34px; cursor:pointer; }
+  .seg button + button { border-left:1px solid rgba(255,255,255,0.1); }
+  .seg button.on { color:#fff; }
+  .seg button.on.x { background:rgba(255,255,255,0.12); color:var(--light); }
+  .on.tA, .tagA { background:var(--tA); } .on.tB, .tagB { background:var(--tB); } .on.tC, .tagC { background:var(--tC); }
+  .tag { display:inline-block; min-width:22px; text-align:center; border-radius:6px; padding:1px 6px; font-weight:700; font-size:12px; color:#fff; }
+  .num { width:74px !important; text-align:center; flex-shrink:0; }
+  .rec { font-size:12px; color:var(--muted); width:84px; text-align:right; flex-shrink:0; }
+  .rec.up { color:var(--accent); font-weight:700; }
+  .counts { display:flex; gap:10px; margin:8px 0 12px; flex-wrap:wrap; }
+  .counts span { font-size:12px; color:var(--muted); }
+  .washlist { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+  .washlist .w { display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.06); border-radius:8px; padding:4px 6px 4px 8px; font-size:13px; }
+  .washlist .w button { background:none; border:none; color:var(--muted); font-size:16px; cursor:pointer; padding:0 4px; }
+  .setrow { display:grid; grid-template-columns:52px 1fr 1fr; gap:8px; align-items:center; padding:8px 0; border-top:1px solid rgba(255,255,255,0.06); }
+  .setrow:first-of-type { border-top:none; }
+  .setrow b { font-size:15px; }
+  .step { display:flex; align-items:center; gap:0; flex-shrink:0; }
+  .step button { width:32px; height:32px; border-radius:8px; border:1.5px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.05); color:var(--light); font-size:16px; cursor:pointer; }
+  .step span { width:26px; text-align:center; font-weight:700; }
+  .chk { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); flex-shrink:0; cursor:pointer; }
+  .chk input { width:18px; height:18px; accent-color:var(--red); }
+  table.recap { width:100%; border-collapse:collapse; font-size:13px; }
+  table.recap th { font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); text-align:right; padding:0 4px 6px; font-weight:700; }
+  table.recap th:first-child, table.recap td:first-child { text-align:left; }
+  table.recap td { padding:7px 4px; border-top:1px solid rgba(255,255,255,0.06); text-align:right; font-variant-numeric:tabular-nums; }
+  table.recap td.tot { font-weight:700; color:var(--accent); }
+  .steps-gh { font-size:13px; line-height:1.7; color:#c8d4e8; padding-left:18px; }
+  .steps-gh code { background:rgba(255,255,255,0.08); padding:1px 5px; border-radius:4px; }
+  details summary { cursor:pointer; font-weight:600; color:var(--accent); }
+  .sticky { position:sticky; bottom:0; background:linear-gradient(180deg,rgba(13,27,42,0) 0%,var(--navy) 30%); padding:18px 16px 16px; }
+  .sticky .inner { max-width:720px; margin:0 auto; }
+  .toast { position:fixed; left:50%; bottom:90px; transform:translateX(-50%); background:var(--green); color:#fff; padding:10px 16px; border-radius:10px; font-weight:600; font-size:14px; opacity:0; transition:opacity .25s; pointer-events:none; z-index:10; max-width:90vw; text-align:center; }
+  .toast.show { opacity:1; }
+  .hidden { display:none !important; }
+  @media (max-width:420px) { .rec { width:64px; } .num { width:62px !important; } .seg button { width:34px; } }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="badge">Espace coach</div>
+  <h1>Saisie de la ligue interne</h1>
+</div>
+
+<div class="wrap">
+  <div id="status" class="status">Chargement…</div>
+
+  <!-- Séance -->
+  <div class="card">
+    <h2>📅 Séance</h2>
+    <div class="row2">
+      <div><label class="lbl">Séance</label><select id="selSeance"></select></div>
+      <div><label class="lbl">Date</label><input type="date" id="date"></div>
+    </div>
+  </div>
+
+  <!-- Effectif -->
+  <div class="card">
+    <details id="detEffectif">
+      <summary>👥 Effectif de la saison (<span id="nbJ">0</span> joueuses)</summary>
+      <p class="hint" style="margin-top:10px;">Une joueuse par ligne : <b>Prénom ; groupe d'origine</b> (ex. <i>Léa ; M18 A</i>). Le groupe sert au tirage au sort pour mélanger les anciens groupes. Prénoms uniquement : le classement est public.</p>
+      <label class="lbl">Saison</label><input type="text" id="saison" placeholder="2026-2027" style="margin-bottom:10px;">
+      <textarea id="effectif" placeholder="Léa ; M18 A&#10;Manon ; M18 B&#10;Chloé ; M15"></textarea>
+      <div class="btns" style="margin-top:10px;"><button class="btn small" id="btnEffectif">Valider l'effectif</button></div>
+    </details>
+  </div>
+
+  <!-- Équipes -->
+  <div class="card">
+    <h2>🎽 Présentes & équipes <small id="cntTeams"></small></h2>
+    <p class="hint">« – » = absente. Coche les présentes (A, B ou C à la main), ou utilise le tirage au sort.</p>
+    <div class="btns" style="margin-bottom:10px;">
+      <button class="btn small" id="btnToutes">Toutes présentes</button>
+      <button class="btn small primary" id="btnTirage">🎲 Tirage au sort des présentes</button>
+    </div>
+    <div class="plist" id="listeEquipes"></div>
+  </div>
+
+  <!-- Service -->
+  <div class="card">
+    <h2>🎯 Challenge service <small>P=3 · +=1 · –=0 · F=–2</small></h2>
+    <p class="hint">Total des 10 services de chaque joueuse (entre –20 et 30). À droite, le record d'avant cette séance.</p>
+    <div class="counts" id="totService"></div>
+    <div class="plist" id="listeService"></div>
+  </div>
+
+  <!-- Wash -->
+  <div class="card">
+    <h2>🔁 Wash drill <small>+1 manche gagnée</small></h2>
+    <div class="btns">
+      <button class="btn tagA" style="border:none;color:#fff" data-wash="A">+ Manche A</button>
+      <button class="btn tagB" style="border:none;color:#fff" data-wash="B">+ Manche B</button>
+      <button class="btn tagC" style="border:none;color:#fff" data-wash="C">+ Manche C</button>
+    </div>
+    <div class="washlist" id="washList"></div>
+  </div>
+
+  <!-- Remontada -->
+  <div class="card">
+    <h2>🔥 Match à remontada</h2>
+    <p class="hint">Pour chaque set : l'équipe partie à 20 (menée) et l'équipe gagnante.</p>
+    <div id="remoList"></div>
+  </div>
+
+  <!-- Bonus -->
+  <div class="card">
+    <h2>🧠 Bonus & fair-play</h2>
+    <p class="hint">Bonus Voir → Décider → Agir : 0 à 2 par joueuse. Malus fair-play : –1.</p>
+    <div class="plist" id="listeBonus"></div>
+  </div>
+
+  <!-- Aperçu -->
+  <div class="card">
+    <h2>📊 Points de la séance</h2>
+    <div id="apercu"></div>
+  </div>
+
+  <!-- Publication -->
+  <div class="card">
+    <h2>🚀 Publier sur le site</h2>
+    <ol class="steps-gh">
+      <li>Appuie sur <b>Enregistrer la séance</b> (en bas).</li>
+      <li>Appuie sur <b>Télécharger ligue.json</b>.</li>
+      <li>Sur GitHub, dépôt <code>Vcc-m18</code> → <b>Add file › Upload files</b> → dépose <code>ligue.json</code> → <b>Commit changes</b>.</li>
+      <li>Le classement des filles est à jour environ 1 minute plus tard.</li>
+    </ol>
+    <div class="btns" style="margin-top:12px;">
+      <button class="btn primary" id="btnDl">⬇️ Télécharger ligue.json</button>
+      <button class="btn" id="btnCopy">📋 Copier le JSON</button>
+      <button class="btn" id="btnImport">📂 Importer un fichier</button>
+      <input type="file" id="fileImport" accept=".json,application/json" class="hidden">
+    </div>
+    <div class="btns" style="margin-top:12px;">
+      <button class="btn small" id="btnReload">↻ Recharger depuis le site (abandonne les modifs locales)</button>
+    </div>
+  </div>
+  <div style="height:60px"></div>
+</div>
+
+<div class="sticky"><div class="inner btns">
+  <button class="btn primary" id="btnSave" style="flex:1">💾 Enregistrer la séance</button>
+  <button class="btn danger" id="btnDel">🗑</button>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script src="ligue.js"></script>
+<script>
+const KEY = 'ligue-m18f-brouillon';
+const E = LIGUE.EQUIPES;
+let data = null;         // toute la ligue
+let cur = null;          // séance en cours d'édition (copie)
+let curIdx = -1;         // index dans data.seances, -1 = nouvelle
+let dirty = false;       // modifs non publiées (téléchargement non fait)
+
+const $ = id => document.getElementById(id);
+const esc = t => { const d = document.createElement('div'); d.textContent = t ?? ''; return d.innerHTML; };
+function toast(msg, err) { const t = $('toast'); t.textContent = msg; t.style.background = err ? 'var(--red)' : 'var(--green)'; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2200); }
+function today() { const d = new Date(); return new Date(d - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); }
+function vide(date) { return { date: date || today(), equipes: { A: [], B: [], C: [] }, service: {}, wash: [], remontada: [{ set: 'A-B' }, { set: 'B-C' }, { set: 'A-C' }], sda: {}, fairplay: [] }; }
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+function persist() {
+  try { localStorage.setItem(KEY, JSON.stringify({ data, cur, curIdx, dirty, t: Date.now() })); } catch (e) {}
+}
+function setStatus() {
+  const st = $('status');
+  const n = data.seances.length;
+  if (dirty) { st.className = 'status warn'; st.innerHTML = `⚠️ Des modifications ne sont pas encore publiées sur le site. Télécharge <b>ligue.json</b> et dépose-le sur GitHub.`; }
+  else { st.className = 'status ok'; st.innerHTML = `✅ ${n} séance${n > 1 ? 's' : ''} dans la ligue${data.saison ? ' · saison ' + esc(data.saison) : ''}. Tout est à jour.`; }
+}
+
+// ---------- Initialisation ----------
+async function init(forceSite) {
+  let brouillon = null;
+  if (!forceSite) { try { brouillon = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {} }
+  if (brouillon && brouillon.data && brouillon.dirty) {
+    data = LIGUE.normaliser(brouillon.data); cur = brouillon.cur; curIdx = brouillon.curIdx; dirty = true;
+  } else {
+    try { data = await LIGUE.charger(); }
+    catch (e) {
+      data = LIGUE.normaliser(brouillon?.data || {});
+      $('status').className = 'status warn';
+      $('status').textContent = "Impossible de lire ligue.json sur le site (page ouverte hors ligne ?). Tu peux importer le fichier.";
+    }
+    dirty = false; curIdx = -1; cur = vide();
+    // séance en cours de saisie (pas encore enregistrée) : on la reprend
+    if (brouillon && brouillon.curIdx === -1 && brouillon.cur && LIGUE.presentes(brouillon.cur).length) cur = brouillon.cur;
+  }
+  if (!cur) cur = vide();
+  if (!data.joueuses.length) $('detEffectif').open = true;
+  renderAll();
+  setStatus();
+}
+
+// ---------- Rendu ----------
+function renderAll() {
+  renderSelect(); renderEffectif(); renderEquipes(); renderService(); renderWash(); renderRemo(); renderBonus(); renderApercu();
+}
+function renderSelect() {
+  const s = $('selSeance');
+  s.innerHTML = `<option value="-1">➕ Nouvelle séance</option>` +
+    data.seances.map((x, i) => `<option value="${i}">${LIGUE.dateFr(x.date)}</option>`).join('');
+  s.value = String(curIdx);
+  $('date').value = cur.date;
+  $('btnDel').classList.toggle('hidden', curIdx < 0);
+}
+function renderEffectif() {
+  $('nbJ').textContent = data.joueuses.length;
+  $('saison').value = data.saison || '';
+  $('effectif').value = data.joueuses.map(j => j.groupe ? `${j.nom} ; ${j.groupe}` : j.nom).join('\n');
+}
+function noms() {
+  const set = new Set(data.joueuses.map(j => j.nom));
+  LIGUE.presentes(cur).forEach(n => set.add(n)); // joueuses d'une ancienne séance retirées de l'effectif
+  return [...set];
+}
+function groupeDe(nom) { return data.joueuses.find(j => j.nom === nom)?.groupe || ''; }
+function equipe(nom) { return LIGUE.equipeDe(cur, nom); }
+function setEquipe(nom, e) {
+  E.forEach(x => { cur.equipes[x] = (cur.equipes[x] || []).filter(n => n !== nom); });
+  if (e) cur.equipes[e].push(nom);
+  else { delete cur.service[nom]; delete cur.sda[nom]; cur.fairplay = cur.fairplay.filter(n => n !== nom); }
+  changed();
+}
+function renderEquipes() {
+  const L = noms();
+  if (!L.length) { $('listeEquipes').innerHTML = `<p class="hint">Renseigne d'abord l'effectif ci-dessus.</p>`; $('cntTeams').textContent = ''; return; }
+  $('listeEquipes').innerHTML = L.map(n => {
+    const e = equipe(n);
+    return `<div class="prow"><div class="nm">${esc(n)}${groupeDe(n) ? `<small>${esc(groupeDe(n))}</small>` : ''}</div>
+      <div class="seg" data-nom="${esc(n)}">
+        <button data-e="" class="${!e ? 'on x' : ''}">–</button>
+        ${E.map(x => `<button data-e="${x}" class="${e === x ? 'on t' + x : ''}">${x}</button>`).join('')}
+      </div></div>`;
+  }).join('');
+  $('cntTeams').textContent = E.map(x => `${x} : ${cur.equipes[x].length}`).join(' · ');
+}
+function pres() { return E.flatMap(e => cur.equipes[e].map(n => ({ n, e }))); }
+function renderService() {
+  const P = pres();
+  const rec = LIGUE.recordsAvant(data, curIdx < 0 ? data.seances.length : curIdx);
+  const { totaux, rangs } = LIGUE.rangsService(cur);
+  $('totService').innerHTML = E.filter(e => cur.equipes[e].length).map(e =>
+    `<span><span class="tag tag${e}">${e}</span> ${totaux[e] ?? '–'}${rangs[e] ? ` (${rangs[e]}${rangs[e] === 1 ? 're' : 'e'})` : ''}</span>`).join('');
+  $('listeService').innerHTML = P.length ? P.map(({ n, e }) => {
+    const v = cur.service[n]; const r = rec[n];
+    const up = typeof v === 'number' && r !== undefined && v > r;
+    return `<div class="prow"><span class="tag tag${e}">${e}</span><div class="nm">${esc(n)}</div>
+      <input class="num" type="number" inputmode="numeric" min="-20" max="30" data-serv="${esc(n)}" value="${v ?? ''}" placeholder="–">
+      <div class="rec ${up ? 'up' : ''}">${up ? '🎯 record !' : (r !== undefined ? 'record ' + r : 'pas de record')}</div></div>`;
+  }).join('') : `<p class="hint">Aucune présente.</p>`;
+}
+function renderWash() {
+  $('washList').innerHTML = cur.wash.length ? cur.wash.map((g, i) =>
+    `<div class="w">M${i + 1} <span class="tag tag${g}">${g}</span><button data-delwash="${i}" aria-label="Supprimer">×</button></div>`).join('')
+    : `<span class="hint">Aucune manche saisie.</span>`;
+}
+function renderRemo() {
+  $('remoList').innerHTML = cur.remontada.map((s, i) => {
+    const [a, b] = s.set.split('-');
+    const opt = (sel, lab) => `<option value="">${lab}</option>` + [a, b].map(x => `<option value="${x}" ${sel === x ? 'selected' : ''}>Équipe ${x}</option>`).join('');
+    return `<div class="setrow"><b>${a} – ${b}</b>
+      <select data-remo="${i}" data-k="menee">${opt(s.menee, 'Menée : ?')}</select>
+      <select data-remo="${i}" data-k="gagnante">${opt(s.gagnante, 'Gagnante : ?')}</select></div>`;
+  }).join('');
+}
+function renderBonus() {
+  const P = pres();
+  $('listeBonus').innerHTML = P.length ? P.map(({ n, e }) => `<div class="prow"><span class="tag tag${e}">${e}</span><div class="nm">${esc(n)}</div>
+      <div class="step"><button data-sda="${esc(n)}" data-d="-1">−</button><span>${cur.sda[n] || 0}</span><button data-sda="${esc(n)}" data-d="1">+</button></div>
+      <label class="chk"><input type="checkbox" data-fp="${esc(n)}" ${cur.fairplay.includes(n) ? 'checked' : ''}>–1</label></div>`).join('')
+    : `<p class="hint">Aucune présente.</p>`;
+}
+function renderApercu() {
+  const tmp = clone(data);
+  const idx = curIdx < 0 ? tmp.seances.length : curIdx;
+  tmp.seances[idx] = clone(cur);
+  // calcul sur la séance à sa place chronologique
+  const order = tmp.seances.map((s, i) => ({ s, i })).sort((x, y) => (x.s.date || '').localeCompare(y.s.date || '') || x.i - y.i);
+  tmp.seances = order.map(o => o.s);
+  const pos = order.findIndex(o => o.i === idx);
+  const pts = LIGUE.pointsSeance(tmp, pos);
+  const rows = Object.entries(pts).sort((a, b) => b[1].total - a[1].total || a[0].localeCompare(b[0], 'fr'));
+  $('apercu').innerHTML = rows.length ? `<table class="recap"><thead><tr><th>Joueuse</th><th>Serv.</th><th>Rec.</th><th>Wash</th><th>Rem.</th><th>Bonus</th><th>Total</th></tr></thead><tbody>` +
+    rows.map(([n, p]) => `<tr><td><span class="tag tag${p.equipe}">${p.equipe}</span> ${esc(n)}</td><td>${p.service}</td><td>${p.record}</td><td>${p.wash}</td><td>${p.remontada}</td><td>${p.bonus}</td><td class="tot">${p.total}</td></tr>`).join('') +
+    `</tbody></table>` : `<p class="hint">Les points s'afficheront dès que des joueuses seront dans une équipe.</p>`;
+}
+function changed(what) {
+  persist();
+  if (what !== 'service') renderEquipes();
+  renderService(); if (what !== 'service') { renderWash(); renderRemo(); renderBonus(); }
+  renderApercu();
+}
+
+// ---------- Actions ----------
+$('selSeance').onchange = e => {
+  curIdx = +e.target.value;
+  cur = curIdx < 0 ? vide() : clone(data.seances[curIdx]);
+  if (!cur.remontada || !cur.remontada.length) cur.remontada = vide().remontada;
+  persist(); renderAll();
+};
+$('date').onchange = e => { cur.date = e.target.value; persist(); };
+$('btnEffectif').onclick = () => {
+  const vus = new Set();
+  data.joueuses = $('effectif').value.split('\n').map(l => l.trim()).filter(Boolean).map(l => {
+    const [nom, groupe] = l.split(/[;,]/).map(x => (x || '').trim());
+    return { nom, groupe: groupe || '' };
+  }).filter(j => j.nom && !vus.has(j.nom) && vus.add(j.nom));
+  data.saison = $('saison').value.trim();
+  dirty = true; persist(); renderAll(); setStatus(); toast('Effectif enregistré');
+};
+$('listeEquipes').onclick = e => {
+  const b = e.target.closest('button[data-e]'); if (!b) return;
+  setEquipe(b.parentElement.dataset.nom, b.dataset.e || null);
+};
+$('btnToutes').onclick = () => {
+  noms().forEach(n => { if (!equipe(n)) cur.equipes.A.push(n); });
+  changed(); toast('Toutes présentes (en A) — lance le tirage');
+};
+$('btnTirage').onclick = () => {
+  const P = pres().map(x => x.n);
+  if (P.length < 3) { toast('Coche au moins 3 présentes', true); return; }
+  if (Object.keys(cur.service).length && !confirm('Refaire le tirage ? Les scores déjà saisis restent attachés aux joueuses.')) return;
+  // mélange dans chaque groupe d'origine, puis distribution en serpentin → groupes répartis
+  const parGroupe = {};
+  P.forEach(n => { const g = groupeDe(n) || '?'; (parGroupe[g] = parGroupe[g] || []).push(n); });
+  const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const ordre = shuffle(Object.keys(parGroupe)).flatMap(g => shuffle(parGroupe[g]));
+  const start = Math.floor(Math.random() * 3);
+  cur.equipes = { A: [], B: [], C: [] };
+  ordre.forEach((n, i) => {
+    // équipe la moins remplie en partant d'un point tournant, pour équilibrer 5/5/5 ou 5/5/4
+    const cand = E.map((x, k) => E[(start + i + k) % 3]);
+    const min = Math.min(...E.map(x => cur.equipes[x].length));
+    cur.equipes[cand.find(x => cur.equipes[x].length === min)].push(n);
+  });
+  changed(); toast('Équipes tirées au sort 🎲');
+};
+$('listeService').oninput = e => {
+  const n = e.target.dataset.serv; if (!n) return;
+  const v = e.target.value.trim();
+  if (v === '' || isNaN(+v)) delete cur.service[n]; else cur.service[n] = Math.max(-20, Math.min(30, Math.round(+v)));
+  persist();
+  // mise à jour légère : totaux + record + aperçu sans reconstruire les champs (garde le focus)
+  const { totaux, rangs } = LIGUE.rangsService(cur);
+  $('totService').innerHTML = E.filter(x => cur.equipes[x].length).map(x =>
+    `<span><span class="tag tag${x}">${x}</span> ${totaux[x] ?? '–'}${rangs[x] ? ` (${rangs[x]}${rangs[x] === 1 ? 're' : 'e'})` : ''}</span>`).join('');
+  const rec = LIGUE.recordsAvant(data, curIdx < 0 ? data.seances.length : curIdx);
+  const r = rec[n], box = e.target.nextElementSibling, val = cur.service[n];
+  const up = typeof val === 'number' && r !== undefined && val > r;
+  box.className = 'rec' + (up ? ' up' : ''); box.textContent = up ? '🎯 record !' : (r !== undefined ? 'record ' + r : 'pas de record');
+  renderApercu();
+};
+document.querySelectorAll('[data-wash]').forEach(b => b.onclick = () => {
+  const e = b.dataset.wash;
+  if (!cur.equipes[e].length) { toast(`Équipe ${e} vide`, true); return; }
+  cur.wash.push(e); persist(); renderWash(); renderApercu();
+});
+$('washList').onclick = e => { const b = e.target.closest('[data-delwash]'); if (!b) return; cur.wash.splice(+b.dataset.delwash, 1); persist(); renderWash(); renderApercu(); };
+$('remoList').onchange = e => { const s = e.target.closest('select[data-remo]'); if (!s) return; cur.remontada[+s.dataset.remo][s.dataset.k] = s.value || undefined; persist(); renderApercu(); };
+$('listeBonus').onclick = e => {
+  const b = e.target.closest('button[data-sda]'); if (!b) return;
+  const n = b.dataset.sda; cur.sda[n] = Math.max(0, Math.min(LIGUE.BAREME.sdaMax, (cur.sda[n] || 0) + +b.dataset.d));
+  if (!cur.sda[n]) delete cur.sda[n];
+  persist(); renderBonus(); renderApercu();
+};
+$('listeBonus').onchange = e => {
+  const c = e.target.closest('input[data-fp]'); if (!c) return;
+  const n = c.dataset.fp; cur.fairplay = cur.fairplay.filter(x => x !== n); if (c.checked) cur.fairplay.push(n);
+  persist(); renderApercu();
+};
+$('btnSave').onclick = () => {
+  if (!cur.date) { toast('Indique la date', true); return; }
+  if (!pres().length) { toast('Aucune joueuse dans les équipes', true); return; }
+  const dup = data.seances.findIndex((s, i) => s.date === cur.date && i !== curIdx);
+  if (dup >= 0 && !confirm('Une séance existe déjà à cette date. Enregistrer quand même une 2e séance ?')) return;
+  const s = clone(cur);
+  s.remontada = s.remontada.filter(x => x.menee || x.gagnante).length ? s.remontada : [];
+  if (curIdx < 0) data.seances.push(s); else data.seances[curIdx] = s;
+  data.seances.sort((a, b) => a.date.localeCompare(b.date));
+  curIdx = data.seances.indexOf(s); cur = clone(s);
+  if (!cur.remontada.length) cur.remontada = vide().remontada;
+  dirty = true; persist(); renderAll(); setStatus();
+  toast('Séance enregistrée — pense à télécharger ligue.json');
+};
+$('btnDel').onclick = () => {
+  if (curIdx < 0 || !confirm(`Supprimer la séance du ${LIGUE.dateFr(data.seances[curIdx].date)} ?`)) return;
+  data.seances.splice(curIdx, 1); curIdx = -1; cur = vide(); dirty = true; persist(); renderAll(); setStatus(); toast('Séance supprimée');
+};
+function jsonTexte() { return JSON.stringify({ saison: data.saison, joueuses: data.joueuses, seances: data.seances }, null, 2); }
+$('btnDl').onclick = () => {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([jsonTexte()], { type: 'application/json' }));
+  a.download = 'ligue.json'; document.body.appendChild(a); a.click(); a.remove();
+  dirty = false; persist(); setStatus(); toast('ligue.json téléchargé — dépose-le sur GitHub');
+};
+$('btnCopy').onclick = async () => {
+  try { await navigator.clipboard.writeText(jsonTexte()); toast('JSON copié'); } catch (e) { toast('Copie impossible sur cet appareil', true); }
+};
+$('btnImport').onclick = () => $('fileImport').click();
+$('fileImport').onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  try { data = LIGUE.normaliser(JSON.parse(await f.text())); curIdx = -1; cur = vide(); dirty = true; persist(); renderAll(); setStatus(); toast('Fichier importé'); }
+  catch (err) { toast('Fichier illisible', true); }
+  e.target.value = '';
+};
+$('btnReload').onclick = () => {
+  if (dirty && !confirm('Abandonner les modifications non publiées ?')) return;
+  try { localStorage.removeItem(KEY); } catch (e) {}
+  init(true);
+};
+window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
+
+init();
+</script>
+</body>
+</html>

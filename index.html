@@ -260,6 +260,38 @@
   }
 
   .bottom-safe { height: 24px; }
+
+  /* ===== LIGUE ===== */
+  .lg-empty { text-align:center; padding:40px 20px; color:var(--muted); font-size:14px; line-height:1.6; }
+  .lg-empty .ic { font-size:48px; opacity:.35; margin-bottom:10px; }
+  .podium { display:grid; grid-template-columns:1fr 1.15fr 1fr; gap:8px; align-items:end; margin-bottom:18px; }
+  .pod { border-radius:14px; padding:12px 6px 10px; text-align:center; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); min-width:0; }
+  .pod .medal { font-size:26px; }
+  .pod .nm { font-weight:700; font-size:14px; margin-top:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pod .pt { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:1px; color:var(--accent); line-height:1.1; }
+  .pod.p1 { padding-top:20px; border-color:rgba(232,184,75,.5); background:rgba(232,184,75,.1); }
+  .pod.p1 .pt { font-size:32px; }
+  .lg-table { width:100%; border-collapse:collapse; font-size:14px; }
+  .lg-table th { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; text-align:left; padding:0 6px 8px; }
+  .lg-table td { padding:10px 6px; border-top:1px solid rgba(255,255,255,0.06); }
+  .lg-table .num { text-align:right; font-variant-numeric:tabular-nums; }
+  .lg-table .rg { width:32px; color:var(--muted); font-weight:700; }
+  .lg-table .pts { font-weight:700; color:var(--light); }
+  .lg-table tr.top .rg { color:var(--accent); }
+  .delta { font-size:12px; color:var(--green); font-weight:600; }
+  .delta.neg { color:var(--red); }
+  .delta.none { color:var(--muted); font-weight:400; }
+  .lg-meta { font-size:12px; color:var(--muted); margin:-8px 0 14px; }
+  .teams-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  .team-chip { flex:1; min-width:90px; border-radius:10px; padding:8px 10px; font-size:12px; line-height:1.5; color:#c8d4e8; background:rgba(255,255,255,0.04); border-left:4px solid; }
+  .team-chip b { display:block; font-size:12px; letter-spacing:1px; color:var(--light); }
+  .team-A { border-color:#e05252; } .team-B { border-color:#4a90d9; } .team-C { border-color:#3fbf7f; }
+  .bareme li { font-size:13px; color:#c8d4e8; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; gap:10px; list-style:none; }
+  .bareme li:last-child { border-bottom:none; }
+  .bareme li span:last-child { color:var(--accent); font-weight:700; white-space:nowrap; }
+  details.card summary { cursor:pointer; font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:1px; list-style:none; }
+  details.card summary::-webkit-details-marker { display:none; }
+  details.card[open] summary { margin-bottom:10px; }
 </style>
 </head>
 <body>
@@ -273,6 +305,7 @@
 <div class="nav-scroll">
   <button class="tab active" onclick="switchTab('philosophie', this)">🧭 Philosophie</button>
   <button class="tab" onclick="switchTab('systeme', this)">📋 Système de jeu</button>
+  <button class="tab" onclick="switchTab('ligue', this)">🏆 Ligue</button>
 </div>
 
 <!-- ===== PHILOSOPHIE ===== -->
@@ -368,6 +401,21 @@
   <div class="bottom-safe"></div>
 </div>
 
+<!-- ===== LIGUE INTERNE ===== -->
+<div class="section" id="ligue">
+  <div class="section-title">Ligue interne</div>
+  <div id="ligueMeta" class="lg-meta"></div>
+  <div id="ligueContenu"><div class="lg-empty"><div class="ic">🏆</div>Chargement du classement…</div></div>
+
+  <details class="card">
+    <summary>📏 Comment on marque des points</summary>
+    <ul class="bareme" id="ligueBareme"></ul>
+    <p style="font-size:12px;margin-top:10px;color:var(--muted);">Les équipes changent à chaque séance : pour gagner la ligue, il faut gagner avec tout le monde.</p>
+  </details>
+  <div class="bottom-safe"></div>
+</div>
+
+<script src="ligue.js"></script>
 <script>
   const BASE_URL = 'https://simonducasse-spec.github.io/Vcc-m18/images/';
 
@@ -441,8 +489,84 @@
     }
   }
 
+
+  // ===== LIGUE =====
+  let ligueChargee = false;
+  const _switchTab = switchTab;
+  switchTab = function(id, btn) { _switchTab(id, btn); if (id === 'ligue') afficherLigue(); };
+
+  function esc(t) { const d = document.createElement('div'); d.textContent = t ?? ''; return d.innerHTML; }
+
+  async function afficherLigue() {
+    const zone = document.getElementById('ligueContenu');
+    const B = LIGUE.BAREME;
+    document.getElementById('ligueBareme').innerHTML = [
+      ['Challenge service : équipe 1re / 2e / 3e', B.serviceRang.join(' / ')],
+      ['Record perso de service battu', '+' + B.record],
+      ['Wash drill : manche gagnée', '+' + B.wash],
+      ['Remontada : set gagné', '+' + B.remontada],
+      ['Remontada réussie (équipe menée qui gagne)', '+' + B.remontadaBonus],
+      ['Bonus Voir → Décider → Agir (max ' + B.sdaMax + ')', '+1'],
+      ['Fair-play non respecté', String(B.fairplay)],
+    ].map(([a, b]) => `<li><span>${a}</span><span>${b}</span></li>`).join('');
+
+    let data;
+    try { data = await LIGUE.charger(); }
+    catch (e) { zone.innerHTML = `<div class="lg-empty"><div class="ic">📡</div>Classement indisponible pour le moment.<br>Réessaie dans quelques minutes.</div>`; return; }
+    ligueChargee = true;
+
+    const n = data.seances.length;
+    document.getElementById('ligueMeta').textContent = n
+      ? `${data.saison ? 'Saison ' + data.saison + ' · ' : ''}${n} séance${n > 1 ? 's' : ''} · mis à jour le ${LIGUE.dateFr(data.seances[n - 1].date)}`
+      : (data.saison ? 'Saison ' + data.saison : '');
+
+    if (!n) { zone.innerHTML = `<div class="lg-empty"><div class="ic">🏆</div>La ligue commence bientôt.<br>Le classement apparaîtra après la première séance.</div>`; return; }
+
+    const cl = LIGUE.classement(data).filter(x => x.seances > 0);
+    const medal = ['🥇', '🥈', '🥉'];
+    const pod = cl.slice(0, 3);
+    const ordre = pod.length === 3 ? [pod[1], pod[0], pod[2]] : pod;
+    let html = `<div class="podium">${ordre.map(x => `
+      <div class="pod ${x.rang === 1 ? 'p1' : ''}"><div class="medal">${medal[x.rang - 1] || ''}</div>
+      <div class="nm">${esc(x.nom)}</div><div class="pt">${x.points} pts</div></div>`).join('')}</div>`;
+
+    html += `<div class="card"><table class="lg-table"><thead><tr><th>#</th><th>Joueuse</th><th class="num">Pts</th><th class="num">Dern.</th><th class="num">Séances</th></tr></thead><tbody>`;
+    cl.forEach(x => {
+      const d = x.derniere === null ? '<span class="delta none">absente</span>'
+        : `<span class="delta ${x.derniere < 0 ? 'neg' : ''}">${x.derniere >= 0 ? '+' : ''}${x.derniere}</span>`;
+      html += `<tr class="${x.rang <= 3 ? 'top' : ''}"><td class="rg">${x.rang}</td><td>${esc(x.nom)}</td><td class="num pts">${x.points}</td><td class="num">${d}</td><td class="num">${x.seances}</td></tr>`;
+    });
+    html += `</tbody></table></div>`;
+
+    // Dernière séance
+    const s = data.seances[n - 1];
+    const pts = LIGUE.pointsSeance(data, n - 1);
+    const { totaux } = LIGUE.rangsService(s);
+    const records = Object.entries(pts).filter(([, p]) => p.recordBattu).map(([nom]) => nom);
+    const washW = {}; (s.wash || []).forEach(g => washW[g] = (washW[g] || 0) + 1);
+    html += `<div class="card card-accent"><h3>📅 Dernière séance — ${LIGUE.dateFr(s.date)}</h3><div class="teams-row">`;
+    LIGUE.EQUIPES.forEach(e => {
+      const m = s.equipes?.[e] || []; if (!m.length) return;
+      html += `<div class="team-chip team-${e}"><b>ÉQUIPE ${e}</b>${m.map(esc).join('<br>')}
+        <div style="margin-top:6px;color:var(--muted);">Service : ${totaux[e] ?? '–'} · Wash : ${washW[e] || 0}</div></div>`;
+    });
+    html += `</div>`;
+    if (records.length) html += `<p style="margin-top:12px;">🎯 Record de service battu : <strong>${records.map(esc).join(', ')}</strong></p>`;
+    html += `</div>`;
+
+    // Records service
+    const rec = cl.filter(x => x.record !== null).sort((a, b) => b.record - a.record).slice(0, 5);
+    if (rec.length) {
+      html += `<div class="card card-blue"><h3>🎯 Records au service</h3><table class="lg-table"><tbody>`;
+      rec.forEach((x, i) => { html += `<tr><td class="rg">${i + 1}</td><td>${esc(x.nom)}</td><td class="num pts">${x.record}</td></tr>`; });
+      html += `</tbody></table></div>`;
+    }
+    zone.innerHTML = html;
+  }
+
   // Init
   updateSchema();
+  if (location.hash === '#ligue') switchTab('ligue', document.querySelectorAll('.tab')[2]);
 </script>
 </body>
 </html>
