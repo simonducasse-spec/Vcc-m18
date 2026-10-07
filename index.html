@@ -2,23 +2,19 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Système de Jeu — M18 🏐</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --navy: #0d1b2a;
     --blue: #1a3c5e;
     --accent: #e8b84b;
-    --green: #2a9d5c;
-    --red: #c0392b;
     --light: #f4f6f9;
     --muted: #8a9ab5;
     --radius: 16px;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
   body {
     font-family: 'DM Sans', sans-serif;
     background: var(--navy);
@@ -26,547 +22,169 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
+  .wrap { max-width: 640px; margin: 0 auto; }
 
   .header {
     background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
     padding: 24px 20px 20px;
-    position: relative;
-    overflow: hidden;
+    position: relative; overflow: hidden;
   }
   .header::before {
-    content: '🏐';
-    position: absolute;
-    right: -10px; top: -10px;
-    font-size: 100px;
-    opacity: 0.07;
-    transform: rotate(-15deg);
+    content: '🏐'; position: absolute; right: -10px; top: -10px;
+    font-size: 100px; opacity: 0.07; transform: rotate(-15deg);
   }
   .header-badge {
-    display: inline-block;
-    background: var(--accent);
-    color: var(--navy);
-    font-size: 11px; font-weight: 700;
-    letter-spacing: 2px; text-transform: uppercase;
+    display: inline-block; background: var(--accent); color: var(--navy);
+    font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
     padding: 4px 10px; border-radius: 20px; margin-bottom: 8px;
   }
-  .header h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 38px; letter-spacing: 2px; line-height: 1; margin-bottom: 4px;
-  }
+  .header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 38px; letter-spacing: 2px; line-height: 1; margin-bottom: 4px; }
   .header p { font-size: 13px; color: var(--muted); }
 
-  .nav-scroll {
-    background: var(--navy);
-    overflow-x: auto; scrollbar-width: none;
-    padding: 12px 16px 0;
-    display: flex; gap: 8px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    position: sticky; top: 0; z-index: 100;
-  }
-  .nav-scroll::-webkit-scrollbar { display: none; }
-  .tab {
-    flex-shrink: 0;
-    padding: 8px 20px 10px;
-    border-radius: 10px 10px 0 0;
-    font-size: 13px; font-weight: 600;
-    cursor: pointer; color: var(--muted);
-    border: none; background: transparent;
-    white-space: nowrap; transition: all 0.2s;
-    border-bottom: 3px solid transparent;
-  }
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-  .tab:hover:not(.active) { color: var(--light); }
-
-  .section { display: none; padding: 20px 16px 40px; animation: fadeIn 0.3s ease; }
-  .section.active { display: block; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-  .card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: var(--radius);
-    padding: 18px; margin-bottom: 14px;
-  }
-  .card-accent { border-left: 4px solid var(--accent); background: rgba(232,184,75,0.06); }
-  .card-blue { border-left: 4px solid #4a90d9; background: rgba(74,144,217,0.06); }
-  .card-green { border-left: 4px solid var(--green); background: rgba(42,157,92,0.06); }
-  .card h3 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 20px; letter-spacing: 1px; margin-bottom: 10px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .card p { font-size: 14px; line-height: 1.65; color: #c8d4e8; }
+  main { padding: 20px 16px 40px; }
 
   .section-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px; letter-spacing: 2px; margin-bottom: 16px;
-    color: var(--accent);
+    font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 2px;
+    margin: 6px 0 12px; color: var(--accent);
     display: flex; align-items: center; gap: 10px;
   }
-  .section-title::after {
-    content: ''; flex: 1; height: 1px;
-    background: rgba(232,184,75,0.2);
-  }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: rgba(232,184,75,0.2); }
 
-  .rule-list { list-style: none; }
-  .rule-list li {
-    display: flex; gap: 12px;
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    font-size: 14px; line-height: 1.5; color: #c8d4e8;
-    align-items: flex-start;
+  .schema {
+    border-radius: var(--radius); overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
+    margin-bottom: 22px;
   }
-  .rule-list li:last-child { border-bottom: none; }
-  .rule-icon {
-    flex-shrink: 0; width: 28px; height: 28px;
-    border-radius: 8px; background: var(--accent); color: var(--navy);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 700;
-  }
+  .schema img { width: 100%; height: auto; display: block; aspect-ratio: 1094 / 975; }
 
-  .goal-banner {
-    background: linear-gradient(135deg, rgba(232,184,75,0.12) 0%, rgba(232,184,75,0.04) 100%);
-    border: 1px solid rgba(232,184,75,0.25);
-    border-radius: var(--radius);
-    padding: 16px 18px; margin-bottom: 14px;
-  }
-  .goal-banner .goal-label {
-    font-size: 10px; font-weight: 700;
-    letter-spacing: 2px; text-transform: uppercase;
-    color: var(--accent); margin-bottom: 6px;
-  }
-  .goal-banner .goal-text {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px; letter-spacing: 1px; line-height: 1.2;
-  }
-
-  .model-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 6px 12px; border-radius: 20px;
-    font-size: 12px; font-weight: 600;
-    margin: 4px 4px 4px 0;
-  }
-  .badge-br { background: rgba(0,156,87,0.15); border: 1px solid rgba(0,156,87,0.4); color: #4eca89; }
-  .badge-it { background: rgba(0,100,200,0.15); border: 1px solid rgba(0,100,200,0.4); color: #70a8e8; }
-
-  /* ===== SYSTÈME DE JEU ===== */
-  .sj-controls {
+  .controls {
     background: rgba(255,255,255,0.04);
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: var(--radius);
-    padding: 18px;
-    margin-bottom: 16px;
+    padding: 14px; margin-bottom: 14px;
   }
-  .sj-label {
-    font-size: 11px; font-weight: 700;
-    letter-spacing: 2px; text-transform: uppercase;
+  .label {
+    font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
     color: var(--muted); margin-bottom: 10px;
   }
+  .label + .row { margin-bottom: 14px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .row:last-child { margin-bottom: 0; }
 
-  /* Menu déroulant position */
-  .position-select {
-    width: 100%;
-    background: rgba(255,255,255,0.06);
-    border: 1.5px solid rgba(232,184,75,0.35);
-    border-radius: 10px;
-    color: var(--light);
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    letter-spacing: 2px;
-    padding: 12px 16px;
-    appearance: none;
-    -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23e8b84b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    cursor: pointer;
-    margin-bottom: 16px;
-  }
-  .position-select:focus { outline: none; border-color: var(--accent); }
-
-  /* Boutons action */
-  .action-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .action-row {
-    display: flex;
-    gap: 10px;
-  }
-  .action-btn {
-    padding: 12px 8px;
-    border-radius: 12px;
+  .btn {
+    flex: 1; min-width: 0;
+    padding: 12px 6px; border-radius: 12px;
     border: 2px solid rgba(255,255,255,0.1);
     background: rgba(255,255,255,0.04);
     color: var(--muted);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px; font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
-    line-height: 1.3;
-    flex: 1;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+    line-height: 1.25; text-align: center; cursor: pointer;
+    transition: border-color .2s, color .2s, background .2s;
   }
-  .action-btn:hover { border-color: rgba(232,184,75,0.4); color: var(--light); }
-  .action-btn.active {
-    border-color: var(--accent);
-    background: rgba(232,184,75,0.12);
-    color: var(--accent);
-  }
+  .btn:hover { border-color: rgba(232,184,75,0.4); color: var(--light); }
+  .btn.active { border-color: var(--accent); background: rgba(232,184,75,0.12); color: var(--accent); }
+  .btn.pos { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; padding: 8px 0; }
 
-  /* Zone d'affichage image */
-  .schema-zone {
-    min-height: 200px;
-    border-radius: var(--radius);
-    overflow: hidden;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.06);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 14px;
-  }
-  .schema-zone img {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: var(--radius);
-  }
-  .schema-placeholder {
-    text-align: center;
-    padding: 40px 20px;
-  }
-  .schema-placeholder .ph-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.3; }
-  .schema-placeholder p {
-    font-size: 13px; color: var(--muted); line-height: 1.5;
-  }
-  .schema-placeholder .ph-combo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px; letter-spacing: 1px;
-    color: rgba(232,184,75,0.4);
-    margin-bottom: 8px;
-  }
-
-  .schema-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px; letter-spacing: 1px;
-    color: var(--light); margin-bottom: 4px;
-    text-align: center;
-  }
-  .schema-subtitle {
-    font-size: 12px; color: var(--muted);
-    text-align: center; margin-bottom: 14px;
-  }
-
-  .bottom-safe { height: 24px; }
-
-  /* ===== LIGUE ===== */
-  .lg-empty { text-align:center; padding:40px 20px; color:var(--muted); font-size:14px; line-height:1.6; }
-  .lg-empty .ic { font-size:48px; opacity:.35; margin-bottom:10px; }
-  .podium { display:grid; grid-template-columns:1fr 1.15fr 1fr; gap:8px; align-items:end; margin-bottom:18px; }
-  .pod { border-radius:14px; padding:12px 6px 10px; text-align:center; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); min-width:0; }
-  .pod .medal { font-size:26px; }
-  .pod .nm { font-weight:700; font-size:14px; margin-top:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .pod .pt { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:1px; color:var(--accent); line-height:1.1; }
-  .pod.p1 { padding-top:20px; border-color:rgba(232,184,75,.5); background:rgba(232,184,75,.1); }
-  .pod.p1 .pt { font-size:32px; }
-  .lg-table { width:100%; border-collapse:collapse; font-size:14px; }
-  .lg-table th { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; text-align:left; padding:0 6px 8px; }
-  .lg-table td { padding:10px 6px; border-top:1px solid rgba(255,255,255,0.06); }
-  .lg-table .num { text-align:right; font-variant-numeric:tabular-nums; }
-  .lg-table .rg { width:32px; color:var(--muted); font-weight:700; }
-  .lg-table .pts { font-weight:700; color:var(--light); }
-  .lg-table tr.top .rg { color:var(--accent); }
-  .delta { font-size:12px; color:var(--green); font-weight:600; }
-  .delta.neg { color:var(--red); }
-  .delta.none { color:var(--muted); font-weight:400; }
-  .lg-meta { font-size:12px; color:var(--muted); margin:-8px 0 14px; }
-  .teams-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
-  .team-chip { flex:1; min-width:90px; border-radius:10px; padding:8px 10px; font-size:12px; line-height:1.5; color:#c8d4e8; background:rgba(255,255,255,0.04); border-left:4px solid; }
-  .team-chip b { display:block; font-size:12px; letter-spacing:1px; color:var(--light); }
-  .team-A { border-color:#e05252; } .team-B { border-color:#4a90d9; } .team-C { border-color:#3fbf7f; }
-  .bareme li { font-size:13px; color:#c8d4e8; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; gap:10px; list-style:none; }
-  .bareme li:last-child { border-bottom:none; }
-  .bareme li span:last-child { color:var(--accent); font-weight:700; white-space:nowrap; }
-  details.card summary { cursor:pointer; font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:1px; list-style:none; }
-  details.card summary::-webkit-details-marker { display:none; }
-  details.card[open] summary { margin-bottom:10px; }
+  .schema-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; text-align: center; margin-bottom: 2px; }
+  .schema-subtitle { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 12px; }
 </style>
 </head>
 <body>
+<div class="wrap">
 
 <div class="header">
-  <div class="header-badge">Saison 2025–2026</div>
+  <div class="header-badge">Saison 2026–2027</div>
   <h1>Système de Jeu M18</h1>
   <p>5-1 · Défense prioritaire · Brésil × Italie</p>
 </div>
 
-<div class="nav-scroll">
-  <button class="tab active" onclick="switchTab('philosophie', this)">🧭 Philosophie</button>
-  <button class="tab" onclick="switchTab('systeme', this)">📋 Système de jeu</button>
-  <button class="tab" onclick="switchTab('ligue', this)">🏆 Ligue</button>
-</div>
-
-<!-- ===== PHILOSOPHIE ===== -->
-<div class="section active" id="philosophie">
-
-  <div class="goal-banner">
-    <div class="goal-label">Objectif</div>
-    <div class="goal-text">Pré-Nationale ou Nationale quand vous serez séniors</div>
+<main>
+  <!-- 1. LÉGENDE -->
+  <div class="section-title">Légende</div>
+  <div class="schema">
+    <img src="images/legende.jpg" alt="Légende : R4 Avant (bleu), Centrale (vert), Passeuse (orange), Libéro (rouge), Pointue (jaune), R4 Arrière (violet)">
   </div>
 
-  <div class="section-title">Notre ADN</div>
+  <!-- 2. SCHÉMAS -->
+  <div class="section-title">Système de jeu</div>
 
-  <div class="card card-accent">
-    <h3>🇧🇷 Ce qu'on prend au Brésil</h3>
-    <p>La réception en rotation dynamique : lecture du jeu, anticipation, couverture du terrain en flux continu. <strong>On ne subit pas l'attaque — on l'intercepte.</strong></p>
-    <div style="margin-top:10px;"><span class="model-badge badge-br">🇧🇷 Brésil</span></div>
-  </div>
-
-  <div class="card card-blue">
-    <h3>🇮🇹 Ce qu'on prend à l'Italie</h3>
-    <p>La rigueur du bloc collectif : coordination, communication bloc/défense, discipline positionnelle. <strong>Chaque joueuse sait ce que le bloc ferme et couvre en conséquence.</strong></p>
-    <div style="margin-top:10px;"><span class="model-badge badge-it">🇮🇹 Italie</span></div>
-  </div>
-
-  <div class="section-title">Nos 4 valeurs</div>
-
-  <ul class="rule-list" style="margin-bottom:14px;">
-    <li>
-      <div class="rule-icon">1</div>
-      <span><strong>Lire avant d'agir</strong> — L'anticipation prime sur la réaction. Tu dois voir la balle avant qu'elle parte.</span>
-    </li>
-    <li>
-      <div class="rule-icon">2</div>
-      <span><strong>Communiquer en continu</strong> — Avant, pendant et après chaque action. La voix est une arme.</span>
-    </li>
-    <li>
-      <div class="rule-icon">3</div>
-      <span><strong>Couvrir le vide</strong> — Quand une coéquipière part défendre, tu prends sa zone automatiquement.</span>
-    </li>
-    <li>
-      <div class="rule-icon">4</div>
-      <span><strong>Accepter l'erreur</strong> — On construit du niveau national. L'exigence élevée est une preuve de confiance.</span>
-    </li>
-  </ul>
-
-  <div class="card card-green">
-    <h3>🏆 Le système 5-1</h3>
-    <p>Une seule passeuse distribue le jeu sur toute la rotation. Ce système exige de la constance en réception et une passeuse capable de lire rapidement depuis n'importe quelle position.</p>
-  </div>
-
-  <div class="bottom-safe"></div>
-</div>
-
-<!-- ===== SYSTÈME DE JEU ===== -->
-<div class="section" id="systeme">
-
-  <div class="sj-controls">
-    <div class="sj-label">Position de rotation</div>
-    <select class="position-select" id="positionSelect" onchange="updateSchema()">
-      <option value="p1">P1</option>
-      <option value="p2">P2</option>
-      <option value="p3">P3</option>
-      <option value="p4">P4</option>
-      <option value="p5">P5</option>
-      <option value="p6">P6</option>
-    </select>
-
-    <div class="sj-label">Action</div>
-    <div class="action-grid">
-      <div class="action-row">
-        <button class="action-btn active" onclick="selectAction('reception', this)">Réception</button>
-      </div>
-      <div class="action-row">
-        <button class="action-btn" onclick="selectAction('attaque2', this)">Attaque Z2</button>
-        <button class="action-btn" onclick="selectAction('attaque3', this)">Attaque Z3</button>
-        <button class="action-btn" onclick="selectAction('attaque4', this)">Attaque Z4</button>
-      </div>
+  <div class="controls">
+    <div class="label">Phase</div>
+    <div class="row" id="phaseRow">
+      <button class="btn active" data-phase="reception">Réception</button>
+      <button class="btn" data-phase="defense">Défense</button>
     </div>
+
+    <div class="label" id="subLabel">Rotation</div>
+    <div class="row" id="subRow"></div>
   </div>
 
-  <div id="schemaTitle" class="schema-title">P1 — Réception</div>
-  <div id="schemaSubtitle" class="schema-subtitle">Formation de départ en réception</div>
-
-  <div class="schema-zone" id="schemaZone">
-    <img id="schemaImg" src="" alt="" style="display:none;">
-    <div class="schema-placeholder" id="schemaPlaceholder">
-      <div class="ph-icon">🏐</div>
-      <div class="ph-combo" id="phCombo"></div>
-      <p>Schéma à venir</p>
-    </div>
+  <div class="schema-title" id="schemaTitle"></div>
+  <div class="schema-subtitle" id="schemaSubtitle"></div>
+  <div class="schema">
+    <img id="schemaImg" src="" alt="">
   </div>
+</main>
 
-  <div class="bottom-safe"></div>
 </div>
 
-<!-- ===== LIGUE INTERNE ===== -->
-<div class="section" id="ligue">
-  <div class="section-title">Ligue interne</div>
-  <div id="ligueMeta" class="lg-meta"></div>
-  <div id="ligueContenu"><div class="lg-empty"><div class="ic">🏆</div>Chargement du classement…</div></div>
-
-  <details class="card">
-    <summary>📏 Comment on marque des points</summary>
-    <ul class="bareme" id="ligueBareme"></ul>
-    <p style="font-size:12px;margin-top:10px;color:var(--muted);">Les équipes changent à chaque séance : pour gagner la ligue, il faut gagner avec tout le monde.</p>
-  </details>
-  <div class="bottom-safe"></div>
-</div>
-
-<script src="ligue.js"></script>
 <script>
-  const BASE_URL = 'https://simonducasse-spec.github.io/Vcc-m18/images/';
-
-  // Images disponibles — ajoute ici au fur et à mesure
-  const images = {
-    'p1-reception': BASE_URL + 'p1-reception.png',
-    'p1-attaque2':  BASE_URL + 'p1-attaque-2.png',
-    'p1-attaque3':  BASE_URL + 'p1-attaque-3.png',
-    'p1-attaque4':  BASE_URL + 'p1-attaque-4.png',
+  // Schémas — pour en ajouter : déposer l'image dans images/ et ajouter une ligne ici
+  const PHASES = {
+    reception: {
+      label: 'Rotation',
+      items: [
+        { id: 'p1', btn: 'P1', title: 'P1 — Réception', sub: 'Passeuse en zone 1', img: 'images/reception-p1.jpg' },
+        { id: 'p2', btn: 'P2', title: 'P2 — Réception', sub: 'Passeuse en zone 2', img: 'images/reception-p2.jpg' },
+        { id: 'p3', btn: 'P3', title: 'P3 — Réception', sub: 'Passeuse en zone 3', img: 'images/reception-p3.jpg' },
+        { id: 'p4', btn: 'P4', title: 'P4 — Réception', sub: 'Passeuse en zone 4', img: 'images/reception-p4.jpg' },
+        { id: 'p5', btn: 'P5', title: 'P5 — Réception', sub: 'Passeuse en zone 5', img: 'images/reception-p5.jpg' },
+        { id: 'p6', btn: 'P6', title: 'P6 — Réception', sub: 'Passeuse en zone 6', img: 'images/reception-p6.jpg' },
+      ]
+    },
+    defense: {
+      label: 'Situation',
+      items: [
+        { id: 'base',  btn: 'Base<br>passeuse avant', title: 'Défense — Position de base', sub: 'Passeuse à l’avant, avant l’attaque adverse', img: 'images/defense-base-passeuse-avant.jpg' },
+        { id: 'att2',  btn: 'Attaque<br>adverse en 2', title: 'Défense — Attaque adverse en 2', sub: 'L\u2019adversaire attaque depuis sa zone 2', img: 'images/defense-attaque-2.jpg' },
+        { id: 'att4',  btn: 'Attaque<br>adverse en 4', title: 'Défense — Attaque adverse en 4', sub: 'L\u2019adversaire attaque depuis sa zone 4', img: 'images/defense-attaque-4.jpg' },
+      ]
+    }
   };
 
-  const actionLabels = {
-    'reception': 'Réception',
-    'attaque2': 'Attaque Zone 2',
-    'attaque3': 'Attaque Zone 3',
-    'attaque4': 'Attaque Zone 4',
-  };
+  let phase = 'reception';
+  let current = { reception: 'p1', defense: 'base' };
 
-  const actionSubtitles = {
-    'reception': 'Formation de départ en réception',
-    'attaque2': 'Organisation offensive en zone 2',
-    'attaque3': 'Attaque rapide en zone 3 (centrale)',
-    'attaque4': 'Organisation offensive en zone 4',
-  };
+  // Précharge toutes les images pour un changement instantané
+  Object.values(PHASES).forEach(p => p.items.forEach(i => { const im = new Image(); im.src = i.img; }));
 
-  let currentPosition = 'p1';
-  let currentAction = 'reception';
-
-  function switchTab(id, btn) {
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    btn.classList.add('active');
-  }
-
-  function selectAction(action, btn) {
-    document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentAction = action;
-    updateSchema();
-  }
-
-  function updateSchema() {
-    currentPosition = document.getElementById('positionSelect').value;
-    const key = currentPosition + '-' + currentAction;
-    const posLabel = currentPosition.toUpperCase();
-    const actionLabel = actionLabels[currentAction];
-
-    document.getElementById('schemaTitle').textContent = posLabel + ' — ' + actionLabel;
-    document.getElementById('schemaSubtitle').textContent = actionSubtitles[currentAction];
-
+  function render() {
+    const p = PHASES[phase];
+    document.querySelectorAll('#phaseRow .btn').forEach(b => b.classList.toggle('active', b.dataset.phase === phase));
+    document.getElementById('subLabel').textContent = p.label;
+    const row = document.getElementById('subRow');
+    row.innerHTML = p.items.map(i =>
+      `<button class="btn ${phase === 'reception' ? 'pos' : ''} ${i.id === current[phase] ? 'active' : ''}" data-id="${i.id}">${i.btn}</button>`
+    ).join('');
+    const item = p.items.find(i => i.id === current[phase]);
+    document.getElementById('schemaTitle').textContent = item.title;
+    document.getElementById('schemaSubtitle').textContent = item.sub;
     const img = document.getElementById('schemaImg');
-    const placeholder = document.getElementById('schemaPlaceholder');
-    const phCombo = document.getElementById('phCombo');
-
-    if (images[key]) {
-      img.src = images[key];
-      img.alt = posLabel + ' ' + actionLabel;
-      img.style.display = 'block';
-      placeholder.style.display = 'none';
-      // Gestion erreur de chargement
-      img.onerror = function() {
-        img.style.display = 'none';
-        placeholder.style.display = 'block';
-        phCombo.textContent = posLabel + ' · ' + actionLabel;
-      };
-    } else {
-      img.style.display = 'none';
-      placeholder.style.display = 'block';
-      phCombo.textContent = posLabel + ' · ' + actionLabel;
-    }
+    img.src = item.img;
+    img.alt = item.title;
   }
 
+  document.getElementById('phaseRow').addEventListener('click', e => {
+    const b = e.target.closest('.btn'); if (!b) return;
+    phase = b.dataset.phase; render();
+  });
+  document.getElementById('subRow').addEventListener('click', e => {
+    const b = e.target.closest('.btn'); if (!b) return;
+    current[phase] = b.dataset.id; render();
+  });
 
-  // ===== LIGUE =====
-  let ligueChargee = false;
-  const _switchTab = switchTab;
-  switchTab = function(id, btn) { _switchTab(id, btn); if (id === 'ligue') afficherLigue(); };
-
-  function esc(t) { const d = document.createElement('div'); d.textContent = t ?? ''; return d.innerHTML; }
-
-  async function afficherLigue() {
-    const zone = document.getElementById('ligueContenu');
-    const B = LIGUE.BAREME;
-    document.getElementById('ligueBareme').innerHTML = [
-      ['Challenge service : équipe 1re / 2e / 3e', B.serviceRang.join(' / ')],
-      ['Record perso de service battu', '+' + B.record],
-      ['Wash drill : manche gagnée', '+' + B.wash],
-      ['Remontada : set gagné', '+' + B.remontada],
-      ['Remontada réussie (équipe menée qui gagne)', '+' + B.remontadaBonus],
-      ['Bonus Voir → Décider → Agir (max ' + B.sdaMax + ')', '+1'],
-      ['Fair-play non respecté', String(B.fairplay)],
-    ].map(([a, b]) => `<li><span>${a}</span><span>${b}</span></li>`).join('');
-
-    let data;
-    try { data = await LIGUE.charger(); }
-    catch (e) { zone.innerHTML = `<div class="lg-empty"><div class="ic">📡</div>Classement indisponible pour le moment.<br>Réessaie dans quelques minutes.</div>`; return; }
-    ligueChargee = true;
-
-    const n = data.seances.length;
-    document.getElementById('ligueMeta').textContent = n
-      ? `${data.saison ? 'Saison ' + data.saison + ' · ' : ''}${n} séance${n > 1 ? 's' : ''} · mis à jour le ${LIGUE.dateFr(data.seances[n - 1].date)}`
-      : (data.saison ? 'Saison ' + data.saison : '');
-
-    if (!n) { zone.innerHTML = `<div class="lg-empty"><div class="ic">🏆</div>La ligue commence bientôt.<br>Le classement apparaîtra après la première séance.</div>`; return; }
-
-    const cl = LIGUE.classement(data).filter(x => x.seances > 0);
-    const medal = ['🥇', '🥈', '🥉'];
-    const pod = cl.slice(0, 3);
-    const ordre = pod.length === 3 ? [pod[1], pod[0], pod[2]] : pod;
-    let html = `<div class="podium">${ordre.map(x => `
-      <div class="pod ${x.rang === 1 ? 'p1' : ''}"><div class="medal">${medal[x.rang - 1] || ''}</div>
-      <div class="nm">${esc(x.nom)}</div><div class="pt">${x.points} pts</div></div>`).join('')}</div>`;
-
-    html += `<div class="card"><table class="lg-table"><thead><tr><th>#</th><th>Joueuse</th><th class="num">Pts</th><th class="num">Dern.</th><th class="num">Séances</th></tr></thead><tbody>`;
-    cl.forEach(x => {
-      const d = x.derniere === null ? '<span class="delta none">absente</span>'
-        : `<span class="delta ${x.derniere < 0 ? 'neg' : ''}">${x.derniere >= 0 ? '+' : ''}${x.derniere}</span>`;
-      html += `<tr class="${x.rang <= 3 ? 'top' : ''}"><td class="rg">${x.rang}</td><td>${esc(x.nom)}</td><td class="num pts">${x.points}</td><td class="num">${d}</td><td class="num">${x.seances}</td></tr>`;
-    });
-    html += `</tbody></table></div>`;
-
-    // Dernière séance
-    const s = data.seances[n - 1];
-    const pts = LIGUE.pointsSeance(data, n - 1);
-    const { totaux } = LIGUE.rangsService(s);
-    const records = Object.entries(pts).filter(([, p]) => p.recordBattu).map(([nom]) => nom);
-    const washW = {}; (s.wash || []).forEach(g => washW[g] = (washW[g] || 0) + 1);
-    html += `<div class="card card-accent"><h3>📅 Dernière séance — ${LIGUE.dateFr(s.date)}</h3><div class="teams-row">`;
-    LIGUE.EQUIPES.forEach(e => {
-      const m = s.equipes?.[e] || []; if (!m.length) return;
-      html += `<div class="team-chip team-${e}"><b>ÉQUIPE ${e}</b>${m.map(esc).join('<br>')}
-        <div style="margin-top:6px;color:var(--muted);">Service : ${totaux[e] ?? '–'} · Wash : ${washW[e] || 0}</div></div>`;
-    });
-    html += `</div>`;
-    if (records.length) html += `<p style="margin-top:12px;">🎯 Record de service battu : <strong>${records.map(esc).join(', ')}</strong></p>`;
-    html += `</div>`;
-
-    // Records service
-    const rec = cl.filter(x => x.record !== null).sort((a, b) => b.record - a.record).slice(0, 5);
-    if (rec.length) {
-      html += `<div class="card card-blue"><h3>🎯 Records au service</h3><table class="lg-table"><tbody>`;
-      rec.forEach((x, i) => { html += `<tr><td class="rg">${i + 1}</td><td>${esc(x.nom)}</td><td class="num pts">${x.record}</td></tr>`; });
-      html += `</tbody></table></div>`;
-    }
-    zone.innerHTML = html;
-  }
-
-  // Init
-  updateSchema();
-  if (location.hash === '#ligue') switchTab('ligue', document.querySelectorAll('.tab')[2]);
+  render();
 </script>
 </body>
 </html>
