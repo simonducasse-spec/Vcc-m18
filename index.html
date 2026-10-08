@@ -88,6 +88,11 @@
 
   .schema-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; text-align: center; margin-bottom: 2px; }
   .schema-subtitle { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 12px; }
+  .poste-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .poste { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 4px; font-size: 12px; }
+  .poste .dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .poste.tous { grid-column: span 1; }
+  .hint { font-size: 12px; color: var(--muted); margin-top: 10px; }
 </style>
 </head>
 <body>
@@ -100,10 +105,15 @@
 </div>
 
 <main>
-  <!-- 1. LÉGENDE -->
+  <!-- 1. LÉGENDE + MON POSTE -->
   <div class="section-title">Légende</div>
-  <div class="schema">
-    <img src="images/legende.jpg" alt="Légende : R4 Avant (bleu), Centrale (vert), Passeuse (orange), Libéro (rouge), Pointue (jaune), R4 Arrière (violet)">
+  <div class="schema" style="margin-bottom:12px;">
+    <img id="legendImg" src="images/legende.jpg" alt="Légende : R4 Avant (bleu), Centrale (vert), Passeuse (orange), Libéro (rouge), Pointue (jaune), R4 Arrière (violet)">
+  </div>
+  <div class="controls" style="margin-bottom:22px;">
+    <div class="label">Mon poste</div>
+    <div class="poste-row" id="posteRow"></div>
+    <div class="hint">Ton poste ressort en surbrillance sur tous les schémas.</div>
   </div>
 
   <!-- 2. SCHÉMAS -->
@@ -153,11 +163,41 @@
     }
   };
 
+  const POSTES = [
+    { id: '',           label: 'Tous',        color: null },
+    { id: 'passeuse',   label: 'Passeuse',    color: '#f08a24' },
+    { id: 'pointue',    label: 'Pointue',     color: '#f2d22e' },
+    { id: 'centrale',   label: 'Centrale',    color: '#3cc24a' },
+    { id: 'r4-avant',   label: 'R4 Avant',    color: '#2f8fe0' },
+    { id: 'r4-arriere', label: 'R4 Arrière',  color: '#9b45d6' },
+    { id: 'libero',     label: 'Libéro',      color: '#e53935' },
+  ];
+  // Poste : lien direct (?poste=centrale), sinon dernier choix sur ce téléphone
+  let poste = new URLSearchParams(location.search).get('poste') || '';
+  if (!poste) { try { poste = localStorage.getItem('vcc-poste') || ''; } catch (e) {} }
+  if (!POSTES.some(p => p.id === poste)) poste = '';
+
+  const src = base => poste ? base.replace('.jpg', '--' + poste + '.jpg') : base;
+
+  function renderPostes() {
+    document.getElementById('posteRow').innerHTML = POSTES.map(p =>
+      `<button class="btn poste ${p.id === poste ? 'active' : ''}" data-poste="${p.id}">` +
+      (p.color ? `<span class="dot" style="background:${p.color}"></span>` : '') + p.label + `</button>`
+    ).join('');
+    document.getElementById('legendImg').src = src('images/legende.jpg');
+  }
+  document.getElementById('posteRow').addEventListener('click', e => {
+    const b = e.target.closest('.btn'); if (!b) return;
+    poste = b.dataset.poste;
+    try { localStorage.setItem('vcc-poste', poste); } catch (e) {}
+    renderPostes(); render(); preload();
+  });
+
   let phase = 'reception';
   let current = { reception: 'p1', defense: 'base' };
 
-  // Précharge toutes les images pour un changement instantané
-  Object.values(PHASES).forEach(p => p.items.forEach(i => { const im = new Image(); im.src = i.img; }));
+  // Précharge les schémas du poste choisi pour un changement instantané
+  function preload() { Object.values(PHASES).forEach(p => p.items.forEach(i => { const im = new Image(); im.src = src(i.img); })); }
 
   function render() {
     const p = PHASES[phase];
@@ -171,7 +211,7 @@
     document.getElementById('schemaTitle').textContent = item.title;
     document.getElementById('schemaSubtitle').textContent = item.sub;
     const img = document.getElementById('schemaImg');
-    img.src = item.img;
+    img.src = src(item.img);
     img.alt = item.title;
   }
 
@@ -184,7 +224,7 @@
     current[phase] = b.dataset.id; render();
   });
 
-  render();
+  renderPostes(); render(); preload();
 </script>
 </body>
 </html>
