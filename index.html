@@ -108,7 +108,7 @@
   <!-- 1. LÉGENDE + MON POSTE -->
   <div class="section-title">Légende</div>
   <div class="schema" style="margin-bottom:12px;">
-    <img id="legendImg" src="images/legende.jpg" alt="Légende : R4 Proche Passe (bleu), Centrale (vert), Passeuse (orange), Libéro (rouge), Pointue (jaune), R4 Oppo Pass (violet)">
+    <img id="legendImg" src="images/legende.jpg" alt="Légende : R4 Proche Passe (bleu), Centrale (vert), Passeuse (orange), Libéro (rouge), Pointue (jaune), R4 Oppo Passe (violet)">
   </div>
   <div class="controls" style="margin-bottom:22px;">
     <div class="label">Mon poste</div>
@@ -169,7 +169,7 @@
     { id: 'pointue',    label: 'Pointue',     color: '#f2d22e' },
     { id: 'centrale',   label: 'Centrale',    color: '#3cc24a' },
     { id: 'r4-proche-passe', label: 'R4 Proche Passe', color: '#2f8fe0' },
-    { id: 'r4-oppo-pass',    label: 'R4 Oppo Pass',    color: '#9b45d6' },
+    { id: 'r4-oppo-pass',    label: 'R4 Oppo Passe',   color: '#9b45d6' },
     { id: 'libero',     label: 'Libéro',      color: '#e53935' },
   ];
   // Poste : lien direct (?poste=centrale), sinon dernier choix sur ce téléphone
@@ -177,7 +177,7 @@
   if (!poste) { try { poste = localStorage.getItem('vcc-poste') || ''; } catch (e) {} }
   if (!POSTES.some(p => p.id === poste)) poste = '';
 
-  const VERSION = '20261008'; // à changer quand les images changent (force la mise à jour sur les téléphones)
+  const VERSION = '20261009'; // à changer quand les images changent (force la mise à jour sur les téléphones)
   const src = base => (poste ? base.replace('.jpg', '--' + poste + '.jpg') : base) + '?v=' + VERSION;
 
   function renderPostes() {
